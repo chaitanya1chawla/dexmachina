@@ -1,0 +1,228 @@
+<robot name="box">
+  <link name="root">
+    <mass value="0.01"/>
+  </link>
+  <joint name="forearm_tx_link_joint" type="prismatic">
+    <parent link="forearm_tx_link"/>
+    <child link="forearm_ty_link"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-5.0" upper="5.0" effort="100" velocity="5"/>
+  </joint>
+  <link name="forearm_tx_link">
+    <mass value="0.01"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+  <joint name="forearm_ty_link_joint" type="prismatic">
+    <parent link="forearm_ty_link"/>
+    <child link="forearm_tz_link"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-5.0" upper="5.0" effort="100" velocity="5"/>
+  </joint>
+  <link name="forearm_ty_link">
+    <mass value="0.01"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+  <joint name="forearm_tz_link_joint" type="prismatic">
+    <parent link="forearm_tz_link"/>
+    <child link="forearm_roll_link"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-5.0" upper="5.0" effort="100" velocity="5"/>
+  </joint>
+  <link name="forearm_tz_link">
+    <mass value="0.01"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+  <joint name="forearm_roll_link_joint" type="revolute">
+    <parent link="forearm_roll_link"/>
+    <child link="forearm_pitch_link"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-6.2" upper="6.2" effort="100" velocity="5"/>
+  </joint>
+  <link name="forearm_roll_link">
+    <mass value="0.01"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+  <joint name="forearm_pitch_link_joint" type="revolute">
+    <parent link="forearm_pitch_link"/>
+    <child link="forearm_yaw_link"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-6.2" upper="6.2" effort="100" velocity="5"/>
+  </joint>
+  <link name="forearm_pitch_link">
+    <mass value="0.01"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+  <joint name="forearm_yaw_link_joint" type="revolute">
+    <parent link="forearm_yaw_link"/>
+    <child link="bottom"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-6.2" upper="6.2" effort="100" velocity="5"/>
+  </joint>
+  <link name="forearm_yaw_link">
+    <mass value="0.01"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+  <joint name="fixed" type="fixed">
+    <parent link="root"/>
+    <child link="forearm_tx_link"/>
+  </joint>
+  <material name="obj_color">
+    <color rgba="1.0 0.423529411765 0.0392156862745 1.0"/>
+  </material>
+  <joint name="rotation" type="revolute">
+    <origin xyz="0 0 0"/>
+    <axis xyz="0 0 -1"/>
+    <parent link="bottom"/>
+    <child link="top"/>
+    <dynamics damping="0.01" friction="0.0"/>
+    <limit effort="50" velocity="50" lower="0" upper="2.6"/>
+  </joint>
+  <link name="bottom">
+    <inertial>
+      <origin rpy="0.009578938304163032 0.01383122819087999 0.02210942853910467" xyz="0.06401037477649513 0.1239463244195009 0.0723354468809288"/>
+      <mass value="0.9641835016356286"/>
+      <inertia ixx="0.01740937106990968" ixy="-0.004100502885264876" ixz="6.424519702369054e-05" iyy="0.01853027980705198" iyz="-9.071681726536037e-05" izz="0.009579944157186033"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="obj_color"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny_part0.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny_part1.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny_part2.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny_part3.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny_part4.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny_part5.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny_part6.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="bottom_watertight_tiny_part7.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="top">
+    <inertial>
+      <origin rpy="0.0009680237751385933 0.001544481910897999 0.002495543214473779" xyz="0.112182930090877 0.07129451557071434 0.07301110853740603"/>
+      <mass value="0.13"/>
+      <inertia ixx="0.00197330428049181" ixy="-0.0004732898428930508" ixz="-8.666737675085466e-06" iyy="0.002066596029088538" iyz="-2.543344639705717e-06" izz="0.0009681485909300232"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="obj_color"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny_part0.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny_part1.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny_part2.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny_part3.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny_part4.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny_part5.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny_part6.obj"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="top_watertight_tiny_part7.obj"/>
+      </geometry>
+    </collision>
+  </link>
+</robot>

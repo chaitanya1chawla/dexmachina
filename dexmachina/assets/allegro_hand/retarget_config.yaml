@@ -1,0 +1,16 @@
+low_pass_alpha: 1.0
+scaling_factor: 1.7
+left:
+  urdf_path: allegro_hand_left_6dof.urdf
+  target_origin_link: "base_dummy_link"
+  human_origin_idx: 0
+  target_finger_links: ["link_15.0_tip", "link_11.0_tip", "link_7.0_tip", "link_3.0_tip" ]
+  human_finger_idxs: [ 16, 17, 18, 19]  
+
+right:
+  urdf_path: allegro_hand_right_6dof.urdf
+  target_origin_link: "base_dummy_link"
+  human_origin_idx: 0
+  target_finger_links: [ "link_15.0_tip", "link_3.0_tip", "link_7.0_tip", "link_11.0_tip" ]
+  human_finger_idxs: [ 16, 17, 18, 19]  
+ 

@@ -1,0 +1,5 @@
+## Notes for Pre-processing Inspire Hand assets
+
+- Manually added an `<inertial>` element to `<root>` - In the original urdf, the <root> elem has no inertial element, this causes parsing error from `urdfpy`
+- The URDF used here is the short-wrist version, but some visual meshes are replaced with the better-looking .glb files from [dex-urdf](https://github.com/dexsuite/dex-urdf). Note that the middle/ring/pinky fingers all share the same mesh as index_proximal. The base_link mesh from `dex-urdf` is NOT used here because it's not the same size as this version.
+- Note that the URDF has mimic joints, each with a multiplier to its parent joint, the `dex-retargeting` package parses these mimic tags and respects these constraints. For policy learning, we handle mimic joints by manually specify a mapping that maps the action on a parent joint to the corresponding value on its mimic joints. This mapping needs to be manually specified -- see `envs/hand_cfg/inspire.py`.

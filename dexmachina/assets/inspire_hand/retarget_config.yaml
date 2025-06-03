@@ -1,0 +1,20 @@
+low_pass_alpha: 0.6
+scaling_factor: 1.2
+left:
+  urdf_path: left_xyz_copy.urdf 
+  target_origin_link: "base_link"
+  human_origin_idx: 0  
+  target_finger_links: [ "L_TH_Tip",  "L_FF_Tip", "L_MF_Tip", "L_RF_Tip", "L_LF_Tip"]
+  human_finger_idxs: [16, 17, 18, 19, 20]  
+  target_joint_names: ['L_TH_J1', 'L_TH_J2', 'L_FF_J1', 'L_MF_J1', 'L_RF_J1', 'L_LF_J1', 'L_forearm_tx_link_joint', 'L_forearm_ty_link_joint', 'L_forearm_tz_link_joint', 'L_forearm_roll_link_joint', 'L_forearm_pitch_link_joint', 'L_forearm_yaw_link_joint']
+  wrist_body: "base_link"
+
+right:
+  urdf_path: right_xyz_copy.urdf 
+  target_origin_link: "base_link"
+  human_origin_idx: 0 
+  target_finger_links: [ "R_TH_Tip",  "R_FF_Tip", "R_MF_Tip", "R_RF_Tip", "R_LF_Tip", ]
+  human_finger_idxs: [16, 17, 18, 19, 20]
+  target_joint_names: ['R_TH_J1', 'R_TH_J2', 'R_FF_J1', 'R_MF_J1', 'R_RF_J1', 'R_LF_J1', 'R_forearm_tx_link_joint', 'R_forearm_ty_link_joint', 'R_forearm_tz_link_joint', 'R_forearm_roll_link_joint', 'R_forearm_pitch_link_joint', 'R_forearm_yaw_link_joint']
+  wrist_body: "base_link"
+ 
