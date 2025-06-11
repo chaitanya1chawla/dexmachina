@@ -6,16 +6,17 @@
 
 [arXiv](http://arxiv.org/abs/2505.24853) | [Project Website](https://project-dexmachina.github.io) | [Code Documentation](https://mandizhao.github.io/dexmachina-docs) 
 
-![Teaser](docs/source/media/dexmachina-teaser-website.png)
+![Teaser](dexmachina-teaser-website.png)
 
 ## Code Release Status 
-- 06/11/2025: Released all dexterous hand assets and ARCTIC assets used in our recent [arXiv preprint](http://arxiv.org/abs/2505.24853). Released detailed instructions for processing new hand assets: see code in `dexmachina/hand_proc` and [hand processing doc page](https://mandizhao.github.io/dexmachina-docs/1_process_hands.html). Pushed a new `dexmachina.yaml` file for conda env install.
+- 06/11/2025: 
+Released all dexterous hand assets and ARCTIC assets used in our recent [arXiv preprint](http://arxiv.org/abs/2505.24853). Released detailed instructions for processing new hand assets: see code in `dexmachina/hand_proc` and [hand processing doc page](https://mandizhao.github.io/dexmachina-docs/1_process_hands.html). Pushed a new `dexmachina.yaml` file for conda env install. RL training example in `examples/train_rl.sh`
 - 06/03/2025: Initial Release
 
 
 TODOs 
 - [ ] Advanced rendering code
-- [ ] RL environment and train/eval code
+- [ ] RL eval code
 - [x] Instructions for processing new hands and demonstrations 
 
 ## Installation
@@ -26,6 +27,7 @@ conda create -n dexmachina python=3.10
 conda activate dexmachina
 ```
 2. Clone and install the below custom forks of Genesis and rl-games:
+
 ```
 pip install torch==2.5.1
 git clone https://github.com/MandiZhao/Genesis.git
@@ -35,9 +37,14 @@ git clone https://github.com/MandiZhao/rl_games.git
 cd rl_games
 pip install -e .
 ```
+Additional packages needed for RL training:
+```
+pip install gymnasium ray seaborn wandb trimesh
+```
 
 **If you'd like to install the full conda environment that includes all the packages, use the below yaml file:**
 ```
+# this is obtained from: conda export -f dexmachina.yaml
 conda env create -f dexmachina.yml
 ```
 
