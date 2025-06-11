@@ -9,12 +9,12 @@
 ![Teaser](docs/source/media/dexmachina-teaser-website.png)
 
 ## Code Release Status 
+- 06/10/2025: Released all dexterous hand assets and ARCTIC assets used in our recent [arXiv preprint](http://arxiv.org/abs/2505.24853)
 - 06/03/2025: Initial Release
-TODOs
-- [ ] Remaining dexterous hand assets
+TODOs 
 - [ ] Advanced rendering code
-- [ ] Instructions for processing new hands and demonstrations
-- [x] Inspire and Allegro Hand assets and ARCTIC Assets
+- [ ] RL environment and train/eval code
+- [x] Instructions for processing new hands and demonstrations 
 
 ## Installation
  
@@ -33,6 +33,12 @@ git clone https://github.com/MandiZhao/rl_games.git
 cd rl_games
 pip install -e .
 ```
+
+**If you'd like to install the full conda environment that includes all the packages, use the below yaml file:**
+```
+conda env create -f dexmachina.yml
+```
+
 See the full [documentation](https://mandizhao.github.io/dexmachina-docs) for additional installation instructions for dexterous hand and demonstration data processing, kinematic retargeting, raytracer rendering, etc. 
 
 

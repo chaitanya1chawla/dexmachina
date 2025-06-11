@@ -2,6 +2,10 @@ import os
 from os.path import join
 from dexmachina.asset_utils import get_urdf_path
 
+inspire_asset_dir = "inspire_hand/" 
+left_rel_urdf = join(inspire_asset_dir, "left_xyz_copy.urdf")
+right_rel_urdf = join(inspire_asset_dir, "right_xyz_copy.urdf")
+
 MIMIC_JOINTS={
     "TH_J3": ("TH_J2", 1.0),
     "TH_J4": ("TH_J2", 1.13),
@@ -22,9 +26,6 @@ INSPIRE_DEFAULT_QPOS={
     'left':  [0.25, 0.11, 1.0, 0.76, 0.18, 0.58, 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  ],
     'right': [-0.35, 0.1, 1.05, -0.37, 0.23,  2.64,  0.  ,  0.  ,  0.  , 0.  ,  0.  ,  0.  ,  0.  ,  0.  ,  0.  ,  0.  ,  0.  ,  0.  ]
 }
-
-inspire_asset_dir = "inspire_hand/" 
-left_rel_urdf = join(inspire_asset_dir, "left_xyz_copy.urdf")
 
 INSPIRE_LEFT_CFG={
     "urdf_path": get_urdf_path(left_rel_urdf),
@@ -65,7 +66,7 @@ INSPIRE_LEFT_CFG={
     "collision_groups": {7: 0, 13: 1, 14: 2, 15: 3, 16: 4, 17: 5, 18: 1, 23: 1},
     "collision_palm_name": "base_link", 
 }
-right_rel_urdf = join(inspire_asset_dir, "right_xyz_copy.urdf")
+
 INSPIRE_RIGHT_CFG={
     "urdf_path": get_urdf_path(right_rel_urdf),
     "wrist_link_name": "base_link",

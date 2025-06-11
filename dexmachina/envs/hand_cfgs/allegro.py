@@ -2,8 +2,9 @@ import os
 from os.path import join
 from dexmachina.asset_utils import get_urdf_path
 
-allegro_asset_dir = "allegro_hand"
+allegro_asset_dir = "allegro_hand/"
 left_rel_urdf = join(allegro_asset_dir, "allegro_hand_left_6dof.urdf") 
+right_rel_urdf = join(allegro_asset_dir, "allegro_hand_right_6dof.urdf")
 
 ALLEGRO_LEFT_CFG={
     "urdf_path": get_urdf_path(left_rel_urdf),
@@ -33,7 +34,6 @@ ALLEGRO_LEFT_CFG={
     "collision_palm_name": "base_link",
 }
 
-right_rel_urdf = join(allegro_asset_dir, "allegro_hand_right_6dof.urdf")
 ALLEGRO_RIGHT_CFG={
     "urdf_path": get_urdf_path(right_rel_urdf),
     "wrist_link_name": "base_dummy_link",

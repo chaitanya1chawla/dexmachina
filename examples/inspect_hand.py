@@ -60,6 +60,7 @@ def main(args):
             # scene.reset() 
             step = 0
             iters += 1 
+            exit()
     return 
 
 

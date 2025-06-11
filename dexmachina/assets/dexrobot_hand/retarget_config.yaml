@@ -1,0 +1,25 @@
+# NOTE use mimic joint version!
+low_pass_alpha: 1
+scaling_factor: 1.2
+left:
+  urdf_path: dexhand021_left_6dof.urdf
+  target_origin_link: "base_dummy"
+  human_origin_idx: 0 
+  
+  target_finger_links: ["l_f_link1_tip",  "l_f_link2_tip", "l_f_link3_tip", "l_f_link4_tip", "l_f_link5_tip"] #, "l_f_link1_1"] #], "l_f_link2_1", "l_f_link3_1", "l_f_link4_1", "l_f_link5_1"]
+  human_finger_idxs: [16, 17, 18, 19, 20]  
+  
+  target_joint_names: ['L_forearm_tx_link_joint', 'L_forearm_ty_link_joint', 'L_forearm_tz_link_joint', 'L_forearm_roll_link_joint', 'L_forearm_pitch_link_joint', 'L_forearm_yaw_link_joint', 'l_f_joint1_1', 'l_f_joint1_2', 'l_f_joint1_3', 'l_f_joint1_4', 'l_f_joint2_1', 'l_f_joint2_2', 'l_f_joint2_3', 'l_f_joint2_4', 'l_f_joint3_1', 'l_f_joint3_2', 'l_f_joint3_3', 'l_f_joint3_4', 'l_f_joint4_1', 'l_f_joint4_2', 'l_f_joint4_3', 'l_f_joint4_4', 'l_f_joint5_1', 'l_f_joint5_2', 'l_f_joint5_3', 'l_f_joint5_4']
+  wrist_body: "left_hand_base"
+
+right:
+  urdf_path: dexhand021_right_6dof.urdf
+  target_origin_link: "base_dummy"
+  human_origin_idx: 0 
+
+  target_finger_links: [ "r_f_link1_tip",  "r_f_link2_tip", "r_f_link3_tip", "r_f_link4_tip", "r_f_link5_tip"]
+  human_finger_idxs: [16, 17, 18, 19, 20]
+
+  target_joint_names: ['R_forearm_tx_link_joint', 'R_forearm_ty_link_joint', 'R_forearm_tz_link_joint', 'R_forearm_roll_link_joint', 'R_forearm_pitch_link_joint', 'R_forearm_yaw_link_joint', 'r_f_joint1_1', 'r_f_joint1_2', 'r_f_joint1_3', 'r_f_joint1_4', 'r_f_joint2_1', 'r_f_joint2_2', 'r_f_joint2_3', 'r_f_joint2_4', 'r_f_joint3_1', 'r_f_joint3_2', 'r_f_joint3_3', 'r_f_joint3_4', 'r_f_joint4_1', 'r_f_joint4_2', 'r_f_joint4_3', 'r_f_joint4_4', 'r_f_joint5_1', 'r_f_joint5_2', 'r_f_joint5_3', 'r_f_joint5_4']
+  wrist_body: "right_hand_base"
+ 

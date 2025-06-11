@@ -6,14 +6,29 @@ import torch
 import genesis as gs
 from collections import defaultdict
 from typing import Dict
-
-from dexmachina.envs.hand_cfgs.inspire import INSPIRE_CFGs
-from dexmachina.envs.hand_cfgs.allegro import ALLEGRO_CFGs
+import importlib 
 from dexmachina.asset_utils import get_urdf_path
 
 @torch.jit.script
 def unscale(x, lower, upper): 
     return (2.0 * x - upper - lower) / (upper - lower + 1e-5)
+
+def get_hand_specific_cfg(name="inspire_hand"):
+    hand_prefix = name.replace("_hand", "") # xhand still stays xhand
+    try:
+        module_name = f"dexmachina.envs.hand_cfgs.{hand_prefix}"
+        hand_cfg_module = importlib.import_module(module_name)
+        # Assume the hand cfgs all ends with *_CFGs inside the module
+        cfg_attr = next(
+            attr for attr in dir(hand_cfg_module)
+            if attr.upper().endswith("_CFGS")
+        )
+        hand_cfgs = getattr(hand_cfg_module, cfg_attr)
+        assert isinstance(hand_cfgs, dict), f"{cfg_attr} should be a dict"
+        return hand_cfgs
+
+    except (ImportError, StopIteration, AttributeError, KeyError) as e:
+        raise ValueError(f"Invalid hand name or configuration: {name} - {e}")
 
 def get_default_robot_cfg(name="inspire_hand", side="left", wrist_only=True, group_collisions=False):
     robot_cfg = {
@@ -42,16 +57,12 @@ def get_default_robot_cfg(name="inspire_hand", side="left", wrist_only=True, gro
     }
     assert side in ["left", "right"], f"Invalid side {side}"
     # NOTE robot_cfg['wrist_link_name'] should match retargeting results 
-        
-    if name == "inspire_hand":  
-        robot_cfg.update(INSPIRE_CFGs[side].copy()) 
-     
-    elif name == "allegro_hand":
-        robot_cfg.update(ALLEGRO_CFGs[side].copy())
-
-    else:
-        print(f"Robot {name} not found")
-        raise NotImplementedError
+    
+    hand_cfg = get_hand_specific_cfg(name=name)
+    assert hand_cfg is not None, f"Hand config for {name} not found"
+    assert hand_cfg.get(side, None) is not None, f"Hand config for {name} {side} not found"
+    robot_cfg.update(hand_cfg[side].copy())
+    
     if group_collisions:
         assert robot_cfg.get("collision_groups", None) is not None, "Need to set collision_groups"
     
