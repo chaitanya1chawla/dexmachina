@@ -1,12 +1,13 @@
 import os 
 import sys 
-import torch 
-from os.path import join
+import torch  
 import numpy as np 
+from os.path import join
 from dexmachina.asset_utils import get_asset_path
 
-ARCTIC_PROCESSED_DIR= get_asset_path("arctic/processed")
-RETARGET_CONTACT_DIR= get_asset_path("arctic/contact_retarget")
+ARCTIC_PROCESSED_DIR = get_asset_path("arctic/processed")
+RETARGET_DIR = get_asset_path("retargeted")
+RETARGET_CONTACT_DIR= get_asset_path("contact_retarget")
 
 def get_demo_data(
     obj_name="box", 
@@ -73,7 +74,7 @@ def load_genesis_retarget_data(
     if given_data_fname is not None:
         data_fname = given_data_fname
     else:
-        data_fname = f"assets/retargeted/{hand_name}/{subject_name}/{obj_name}_use_{use_clip}_{ret_type}_{save_name}.npy"
+        data_fname = f"{RETARGET_DIR}/{hand_name}/{subject_name}/{obj_name}_use_{use_clip}_{ret_type}_{save_name}.npy"
     loaded_tensor = False
     if not os.path.exists(data_fname):
         # try .pt extension
@@ -153,4 +154,3 @@ def load_contact_retarget_data(
         retar_contact[side] = {key: data[key] for key in ["collision_link_names", "collision_link_local_idxs"]}
         
     return retar_contact
-

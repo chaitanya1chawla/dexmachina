@@ -30,3 +30,15 @@ def get_asset_path(asset_name):
 def get_urdf_path(urdf_name):
     """Convenience function specifically for URDF files."""
     return get_asset_path(urdf_name)
+
+def get_rl_config_path(cfg_name):
+    # e.g. 'dexmachina/rl/configs/rl_games_ppo_cfg.yaml'
+    try:
+        # Modern approach (Python 3.9+)
+        assets_dir = files('dexmachina') / 'rl' / 'configs'
+        asset_name = f'{cfg_name}.yaml'
+        return assets_dir / asset_name
+    except:
+        # Fallback for older Python or if importlib.resources fails
+        import pkg_resources
+        return Path(pkg_resources.resource_filename('dexmachina', f'rl/configs/{cfg_name}.yaml'))

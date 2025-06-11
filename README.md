@@ -9,8 +9,10 @@
 ![Teaser](docs/source/media/dexmachina-teaser-website.png)
 
 ## Code Release Status 
-- 06/10/2025: Released all dexterous hand assets and ARCTIC assets used in our recent [arXiv preprint](http://arxiv.org/abs/2505.24853)
+- 06/11/2025: Released all dexterous hand assets and ARCTIC assets used in our recent [arXiv preprint](http://arxiv.org/abs/2505.24853). Released detailed instructions for processing new hand assets: see code in `dexmachina/hand_proc` and [hand processing doc page](https://mandizhao.github.io/dexmachina-docs/1_process_hands.html). Pushed a new `dexmachina.yaml` file for conda env install.
 - 06/03/2025: Initial Release
+
+
 TODOs 
 - [ ] Advanced rendering code
 - [ ] RL environment and train/eval code
@@ -25,7 +27,7 @@ conda activate dexmachina
 ```
 2. Clone and install the below custom forks of Genesis and rl-games:
 ```
-pip install torch==2.2.2 
+pip install torch==2.5.1
 git clone https://github.com/MandiZhao/Genesis.git
 cd Genesis
 pip install -e .
