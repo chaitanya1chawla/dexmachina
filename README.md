@@ -45,7 +45,7 @@ pip install gymnasium ray seaborn wandb trimesh
 **If you'd like to install the full conda environment that includes all the packages, use the below yaml file:**
 ```
 # this is obtained from: conda export -f dexmachina.yaml
-conda env create -f dexmachina.yml
+conda env create -f dexmachina.yaml
 ```
 
 See the full [documentation](https://mandizhao.github.io/dexmachina-docs) for additional installation instructions for dexterous hand and demonstration data processing, kinematic retargeting, raytracer rendering, etc. 
