@@ -49,7 +49,7 @@ pip install gymnasium ray seaborn wandb trimesh
 # this is obtained from: conda export -f dexmachina.yaml
 conda env create -f dexmachina.yaml
 ```
-**Lastly, local install the `dexmachina` package**:
+4. Local install the `dexmachina` package:
 ```
 cd dexmachina
 pip install -e .

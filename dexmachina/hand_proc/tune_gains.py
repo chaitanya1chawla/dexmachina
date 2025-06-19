@@ -101,7 +101,7 @@ def create_scene(args, hand_urdfs, obj_name):
             material=gs.materials.Rigid(
                 gravity_compensation=0.8
                 ),
-            vis_mode="collision",
+            # vis_mode="collision", # NOTE: uncomment this to visualize collision shapes
         )
         hand_entities[side] = hand
     camera = None

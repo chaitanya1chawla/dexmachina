@@ -89,8 +89,7 @@ def main():
     gs.init(backend=gs.gpu, logging_level='warning')
     env = BaseEnv(
          **env_kwargs
-    ) 
-    # agent_cfg_fname = "rl/configs/rl_games_ppo_cfg.yaml" 
+    )  
     agent_cfg_fname = get_rl_config_path("rl_games_ppo_cfg")
     with open(agent_cfg_fname, encoding="utf-8") as f:
         agent_cfg = yaml.full_load(f)

@@ -72,8 +72,9 @@ def create_scene(args, hand_urdfs, obj_name):
     scene = gs.Scene(**scene_cfg)
     device = torch.device('cuda:0')
     plane = scene.add_entity(
-        gs.morphs.URDF(file='assets/plane/plane_custom.urdf', fixed=True)
-        ) 
+        # gs.morphs.URDF(file='assets/plane/plane_custom.urdf', fixed=True)
+        gs.morphs.URDF(file='urdf/plane/plane.urdf', fixed=True)
+    ) 
     obj = None
     if args.show_object:
         cardboard_box = scene.add_entity(
@@ -192,7 +193,7 @@ def main(args):
     os.makedirs(save_dir, exist_ok=True)
     save_fname = join(save_dir, f"{clip}.pt")
     if os.path.exists(save_fname) and not args.overwrite:
-        print(f"Already exists: {save_fname}")
+        print(f"Already exists: {save_fname}, add --overwrite tag to overwrite")
         return 
         
     demo_fname = f"assets/arctic/processed/{subject_name}/{obj_name}_use_{use_clip}.npy"

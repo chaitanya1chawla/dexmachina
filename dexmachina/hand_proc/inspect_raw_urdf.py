@@ -364,7 +364,12 @@ def main(args):
             groups = divide_hand_groups(hand, base_link)
             for geom_id, group_id in groups.items():
                 print(f"Geom's link {geom_id} in group {group_id}")
+        print("Geom link groups for all hands:")
         print(groups)
+        print("Link names for all collison links")
+        print(
+            [l.name for l in hand.links if len(l.geoms)>0]
+        )
         breakpoint()
 
     n_steps = args.interp_steps 

@@ -1,0 +1,21 @@
+low_pass_alpha: 0.6
+scaling_factor: 1.5
+left:
+  urdf_path: dex3_left_6dof.urdf
+  target_origin_link: "left_hand_palm_link"
+  human_origin_idx: 0  
+  target_finger_links: ["left_thumb_tip", "left_index_tip", "left_middle_tip"]
+  human_finger_idxs: [16, 17, 18]  
+  target_joint_names: ['L_forearm_tx_link_joint', 'L_forearm_ty_link_joint', 'L_forearm_tz_link_joint', 'L_forearm_roll_link_joint', 'L_forearm_pitch_link_joint', 'L_forearm_yaw_link_joint', 'left_hand_thumb_0_joint', 'left_hand_thumb_1_joint', 'left_hand_thumb_2_joint', 'left_hand_middle_0_joint', 'left_hand_middle_1_joint', 'left_hand_index_0_joint', 'left_hand_index_1_joint']
+  wrist_body: "left_hand_palm_link"
+
+right:
+  urdf_path: dex3_right_6dof.urdf 
+  target_origin_link: "right_hand_palm_link"
+  human_origin_idx: 0 
+  target_finger_links: ["right_thumb_tip", "right_index_tip", "right_middle_tip"]
+  human_finger_idxs: [16, 17, 18]
+  target_joint_names: ['L_forearm_tx_link_joint', 'L_forearm_ty_link_joint', 'L_forearm_tz_link_joint', 'L_forearm_roll_link_joint', 'L_forearm_pitch_link_joint', 'L_forearm_yaw_link_joint', 'right_hand_thumb_0_joint', 'right_hand_thumb_1_joint', 'right_hand_thumb_2_joint', 'right_hand_middle_0_joint', 'right_hand_middle_1_joint', 'right_hand_index_0_joint', 'right_hand_index_1_joint']
+  wrist_body: "right_hand_palm_link"
+ 
+
