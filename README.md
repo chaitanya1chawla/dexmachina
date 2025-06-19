@@ -33,6 +33,8 @@ pip install torch==2.5.1
 git clone https://github.com/MandiZhao/Genesis.git
 cd Genesis
 pip install -e .
+pip install libigl==2.5.1 # NOTE: this is a temporary fix specifically for my fork of Genesis
+
 git clone https://github.com/MandiZhao/rl_games.git
 cd rl_games
 pip install -e .
@@ -46,6 +48,11 @@ pip install gymnasium ray seaborn wandb trimesh
 ```
 # this is obtained from: conda export -f dexmachina.yaml
 conda env create -f dexmachina.yaml
+```
+**Lastly, local install the `dexmachina` package**:
+```
+cd dexmachina
+pip install -e .
 ```
 
 See the full [documentation](https://mandizhao.github.io/dexmachina-docs) for additional installation instructions for dexterous hand and demonstration data processing, kinematic retargeting, raytracer rendering, etc. 
