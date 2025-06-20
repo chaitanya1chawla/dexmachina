@@ -1,6 +1,6 @@
 <robot name="dexhand021_left_simplified">
   <mujoco>
-    <compiler meshdir="../meshes/dexhand021_simplified" balanceinertia="true" discardvisual="false"/>
+    <compiler meshdir="./dexhand021_simplified" balanceinertia="true" discardvisual="false"/>
   </mujoco>
   <joint name="L_forearm_tx_link_joint" type="prismatic">
     <parent link="L_forearm_tx_link"/>

@@ -4,7 +4,7 @@
     <parent link="L_forearm_tx_link"/>
     <child link="L_forearm_ty_link"/>
     <axis xyz="1 0 0"/>
-    <limit lower="-5.0" upper="5.0" effort="100" velocity="5"/>
+    <limit lower="-2.0" upper="2.0" effort="100" velocity="5"/>
   </joint>
   <link name="L_forearm_tx_link">
     <mass value="0.01"/>
@@ -13,7 +13,7 @@
     <parent link="L_forearm_ty_link"/>
     <child link="L_forearm_tz_link"/>
     <axis xyz="0 1 0"/>
-    <limit lower="-5.0" upper="5.0" effort="100" velocity="5"/>
+    <limit lower="-2.0" upper="2.0" effort="100" velocity="5"/>
   </joint>
   <link name="L_forearm_ty_link">
     <mass value="0.01"/>
@@ -22,7 +22,7 @@
     <parent link="L_forearm_tz_link"/>
     <child link="L_forearm_roll_link"/>
     <axis xyz="0 0 1"/>
-    <limit lower="-5.0" upper="5.0" effort="100" velocity="5"/>
+    <limit lower="-2.0" upper="2.0" effort="100" velocity="5"/>
   </joint>
   <link name="L_forearm_tz_link">
     <mass value="0.01"/>

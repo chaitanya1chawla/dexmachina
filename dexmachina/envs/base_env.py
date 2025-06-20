@@ -2,6 +2,7 @@ import os
 import torch
 import numpy as np
 import genesis as gs 
+import pinocchio as pin
 from dexmachina.envs.robot import BaseRobot
 from dexmachina.envs.object import ArticulatedObject
 from dexmachina.envs.rewards import RewardModule
@@ -10,6 +11,7 @@ from dexmachina.envs.contacts import get_filtered_contacts
 from dexmachina.envs.randomizations import RandomizationModule
 from dexmachina.envs.curriculum import Curriculum 
 from dexmachina.envs.maniptrans_curr import ManipTransCurriculum 
+from dexmachina.envs.robot_arm_ik import RobotArmIK
 from typing import Dict, List, Tuple, Union
 from collections import deque
 from genesis.engine.solvers.rigid.rigid_solver_decomp import RigidSolver
@@ -224,6 +226,10 @@ class BaseEnv:
         self.table_height = TABLE_HEIGHT
         self.device = device 
         self.scene = gs.Scene(**self.scene_cfg)
+
+        self.sim_robot = self.scene.add_entity(
+            gs.morphs.MJCF(file="dexmachina/assets/robots/g1/g1_26dof_old_fixedbase_fixedwaist.xml")
+        )
         
         self.rigid_solver = None 
         for solver in self.scene.sim.solvers:
@@ -246,6 +252,8 @@ class BaseEnv:
                 disable_collision=cfg.get('disable_collision', False),
                 ) 
         self.robot_names = list(self.robots.keys())
+        
+        self.robot_arm_ik = RobotArmIK()
         
         self.object_cfgs = object_cfgs
         # use retarget data to set base_init_pos, base_init_quat in obj_cfg
@@ -331,10 +339,33 @@ class BaseEnv:
                 )
                 markers.append(marker)
             self.contact_markers[name] = markers
+            
+        self.wrist_markers = dict()
+        for name, wrist_pose in self.get_wrist_pose().items():
+            # marker = self.scene.add_entity(
+                # gs.morphs.Sphere(
+                    # pos=tuple((float(wrist_pose[:,0]), float(wrist_pose[:,1]), float(wrist_pose[:,2]))),
+                    # radius=0.05,
+                # ),
+                # surface=gs.surfaces.Smooth(color=(1.0, 0.0, 0.0, 0.8)),
+            # )
+            marker = self.scene.add_entity(
+                gs.morphs.Cylinder(
+                    pos=tuple((0., 0., 0.)),
+                    quat=tuple((0., 0., 0., 1.)),
+                    height=0.05,
+                    radius=0.01,
+                ),
+                surface=gs.surfaces.Smooth(color=(1.0, 0.0, 0.0, 0.8)),
+            )
+            self.wrist_markers[name] = marker
         
         plane_urdf_path = env_cfg.get('plane_urdf_path', 'urdf/plane/plane.urdf')
         self.ground = self.scene.add_entity(
-            gs.morphs.URDF(file=plane_urdf_path, fixed=True)
+                        morph=gs.morphs.Plane(
+                        pos=(0, 0, 0.2),  # Position of the plane
+                        normal=(0, 0, 1),  # Normal vector pointing up
+                    )
         )
 
         self._recording = False
@@ -360,7 +391,38 @@ class BaseEnv:
             n_envs=self.num_envs, 
             env_spacing=env_cfg.get('env_spacing', ENV_SPACING),
             n_envs_per_row=env_cfg.get('n_envs_per_row', None),
+
             )
+        self.sim_robot.set_quat([[-0.707, 0.0, 0.0, 0.707]])  # x, y, z coordinates
+        self.sim_robot.set_pos([[0.0, 0.3, 0.9930]])  # x, y, z coordinates
+        self.sim_robot.base_transform = self.quat_to_se3([-0.707, 0.0, 0.0, 0.707], [0.0, 0.3, 0.9930])
+
+    def quat_to_se3(self, quat, pos):
+        """Convert quaternion and position to SE3 transformation matrix"""
+        # Convert quaternion to rotation matrix (w, x, y, z format)
+        w, x, y, z = quat
+        R = np.array([
+            [1-2*y*y-2*z*z, 2*x*y-2*w*z, 2*x*z+2*w*y],
+            [2*x*y+2*w*z, 1-2*x*x-2*z*z, 2*y*z-2*w*x],
+            [2*x*z-2*w*y, 2*y*z+2*w*x, 1-2*x*x-2*y*y]
+        ]) 
+        T = np.eye(4)
+        T[:3, :3] = R
+        T[:3, 3] = pos
+        return pin.SE3(T)
+
+    def world2sim_robot(self, world_pose):
+        """Transform world coordinates to sim robot coordinates"""
+        if not isinstance(world_pose, pin.SE3) and world_pose.shape == (1, 7):
+            world_pose = np.array(torch.Tensor.cpu(world_pose)).astype(np.float64)
+            world_pose = pin.XYZQUATToSE3(world_pose[0])
+        world_to_robot_base = self.sim_robot.base_transform.inverse()
+        return world_to_robot_base * world_pose
+    
+    def sim_robot2world(self, sim_robot_pose):
+        """Transform sim robot coordinates to world coordinates"""
+        robot_base_to_world = self.sim_robot.base_transform
+        return robot_base_to_world * sim_robot_pose
 
     def post_scene_build_setup(self):
         """ call this separately to customize the scene after env.init()"""
@@ -452,7 +514,13 @@ class BaseEnv:
             num_vis = min(len(markers), contacts.shape[1])
             for i in range(num_vis):
                 markers[i].set_pos(contacts[:, i, :3])
-        
+                
+    def update_wrist_markers(self, wrist_pose_dict: Dict[str, torch.Tensor]):
+        for name, pose in wrist_pose_dict.items():
+            marker = self.wrist_markers[name]
+            marker.set_pos(pose[:, :3])
+            marker.set_quat(pose[:, 3:])
+            
     def compute_obs_dim(self):
         
         obs_dim = 0
@@ -643,6 +711,11 @@ class BaseEnv:
         self.obs_sum[:] += torch.abs(self.obs_buf)  
         return self.obs_buf, None, self.rew_buf, self.reset_buf, self.extras
     
+    def get_wrist_pose(self):
+        wrist_pose_left = self.robots['left'].wrist_pose
+        wrist_pose_right = self.robots['right'].wrist_pose
+        return {'left': wrist_pose_left, 'right': wrist_pose_right}
+    
     def _get_rewards(self):
         if self.n_objects == 1:
             obj = self.objects[self.object_names[0]]
@@ -808,6 +881,15 @@ class BaseEnv:
             source, part, side = key.split('_')
             contact_dict[key] = self.prepare_sliced_contact(source, part, side) 
         self.update_contact_markers(contact_dict)
+        
+        self.update_wrist_markers(self.get_wrist_pose())
+        
+        # ik for right arm
+        world_target_pose = self.robots['right'].wrist_pose
+        robot_frame_target_pose = self.world2sim_robot(world_target_pose)
+        qpos, right_arm_qpos = self.robot_arm_ik.ik(robot_frame_target_pose)
+        qpos = qpos[np.newaxis, :]
+        self.sim_robot.set_qpos(qpos, zero_velocity=True)
             
     def get_observations(self):
         value_list = []
