@@ -36,7 +36,7 @@ dependencies:
       - cloudpickle==3.1.1
       - cmeel==0.57.3
       - cmeel-assimp==5.4.3.1
-      - cmeel-boost==1.87.0.1
+      # - cmeel-boost==1.87.0.1
       - cmeel-console-bridge==1.0.2.3
       - cmeel-octomap==1.10.0
       - cmeel-qhull==8.0.2.1
@@ -135,13 +135,13 @@ dependencies:
       - soupsieve==2.7
       - sphinx==8.0.2
       - sphinx-basic-ng==1.0.0b2
-      - sphinxcontrib-ansi==0.7.0.dev20250601
+      # - sphinxcontrib-ansi==0.7.0.dev20250601
       - sphinxcontrib-applehelp==2.0.0
       - sphinxcontrib-devhelp==2.0.0
       - sphinxcontrib-googleanalytics==0.5
       - sphinxcontrib-htmlhelp==2.1.0
       - sphinxcontrib-jsmath==1.0.1
-      - sphinxcontrib-programoutput==0.18.dev0
+      # - sphinxcontrib-programoutput==0.18.dev0
       - sphinxcontrib-qthelp==2.0.0
       - sphinxcontrib-serializinghtml==2.0.0
       - sphinxcontrib-video==0.4.1

@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 @torch.jit.script
 def quat_conjugate(q: torch.Tensor) -> torch.Tensor:
@@ -86,3 +87,55 @@ def matrix_from_quat(quaternions: torch.Tensor) -> torch.Tensor:
     )
     return o.reshape(quaternions.shape[:-1] + (3, 3))
 
+
+
+
+def quaternion_to_rotation_matrix(quat):
+    """
+    Convert quaternion [w, x, y, z] to 3x3 rotation matrix
+    
+    Args:
+        quat: numpy array [w, x, y, z]
+    
+    Returns:
+        3x3 rotation matrix as numpy array
+    """
+    w, x, y, z = quat
+    
+    # Normalize quaternion
+    norm = np.sqrt(w*w + x*x + y*y + z*z)
+    w, x, y, z = w/norm, x/norm, y/norm, z/norm
+    
+    # Convert to rotation matrix
+    R = np.array([
+        [1 - 2*y*y - 2*z*z,     2*x*y - 2*w*z,     2*x*z + 2*w*y],
+        [    2*x*y + 2*w*z, 1 - 2*x*x - 2*z*z,     2*y*z - 2*w*x],
+        [    2*x*z - 2*w*y,     2*y*z + 2*w*x, 1 - 2*x*x - 2*y*y]
+    ])
+    
+    return R
+
+def rotation_matrix_to_euler_angles(R):
+    """
+    Convert 3x3 rotation matrix to Euler angles (ZYX convention)
+    
+    Args:
+        R: 3x3 rotation matrix
+    
+    Returns:
+        Euler angles [roll, pitch, yaw] in radians
+    """
+    # Extract Euler angles from rotation matrix
+    sy = np.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
+    singular = sy < 1e-6
+
+    if not singular:
+        x = np.arctan2(R[2,1], R[2,2])
+        y = np.arctan2(-R[2,0], sy)
+        z = np.arctan2(R[1,0], R[0,0])
+    else:
+        x = np.arctan2(-R[1,2], R[1,1])
+        y = np.arctan2(-R[2,0], sy)
+        z = 0
+
+    return np.array([x, y, z])  # roll, pitch, yaw

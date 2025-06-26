@@ -105,7 +105,7 @@ def eval_one_episode(env, agent, obj_state_tensor, print_rew=False, record_video
                 if agent.is_rnn and agent.states is not None:
                     for s in agent.states:
                         s[:, dones, :] = 0.0 
-        
+        from IPython import embed; embed()
         if print_rew:
             print(f"Step {env_step}: Reward: {rew.cpu().numpy()}")
             # perform operations for terminated episodes 

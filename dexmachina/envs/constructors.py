@@ -215,6 +215,41 @@ def get_all_env_cfg(args, device, load_retarget_data=True):
         )
         curr_cfg = get_curriculum_cfg(curr_kwargs)
     
+    assert args.slowdown_rate <= 1.0, "Slowdown rate should be less than 1"
+    if args.slowdown_rate < 1.0:
+        if 1 % args.slowdown_rate != 0:
+            print(f'WARNING: 1 / {args.slowdown_rate} is not an integer, rounding rate to {1 / (1 // args.slowdown_rate)}')
+            rate = int(1 // args.slowdown_rate)
+        else:
+            rate = int(1 / args.slowdown_rate)
+            
+        env_cfg['episode_length'] = env_cfg['episode_length'] * rate
+        env_cfg["max_video_frames"] = env_cfg["max_video_frames"] * rate
+        env_cfg['chunk_ep_length'] = env_cfg['chunk_ep_length'] * rate
+        curr_cfg['dialback_ep_len'] = curr_cfg['dialback_ep_len'] * rate
+            
+        demo_data['obj_pos'] = np.repeat(demo_data['obj_pos'], rate, axis=0) # 175, 3
+        demo_data['obj_quat'] = np.repeat(demo_data['obj_quat'], rate, axis=0) # 175, 4
+        demo_data['obj_arti'] = np.repeat(demo_data['obj_arti'], rate, axis=0) # 175,
+        
+        demo_data['contact_links_left'] = np.repeat(demo_data['contact_links_left'], rate, axis=0) # 175, 2, 13, 4
+        demo_data['contact_links_right'] = np.repeat(demo_data['contact_links_right'], rate, axis=0) # 175, 2, 13, 4
+        demo_data['contact_links_valid_left'] = np.repeat(demo_data['contact_links_valid_left'], rate, axis=0) # 175, 2, 13
+        demo_data['contact_links_valid_right'] = np.repeat(demo_data['contact_links_valid_right'], rate, axis=0) # 175, 2, 13
+        
+        for hand in ['left', 'right']:
+            import torch
+            retarget_data[hand]['num_frames'] = int(retarget_data[hand]['num_frames'] // args.slowdown_rate)
+
+            retarget_data[hand]['wrist_pose'] = torch.repeat_interleave(retarget_data[hand]['wrist_pose'], rate, dim=0) # 175, 7
+            retarget_data[hand]['kpts_data']['kpt_pos'] = torch.repeat_interleave(retarget_data[hand]['kpts_data']['kpt_pos'], rate, dim=0) # 175, 18, 3
+            
+            for k, v in retarget_data[hand]['qpos_targets'].items():
+                retarget_data[hand]['qpos_targets'][k] = torch.repeat_interleave(v, rate, dim=0) # [175] -- all are 175
+            
+            for k, v in retarget_data[hand]['residual_qpos'].items():
+                retarget_data[hand]['residual_qpos'][k] = torch.repeat_interleave(v, rate, dim=0) # [175] -- all are 175
+
     env_kwargs = {
         'env_cfg': env_cfg,
         'robot_cfgs': robot_cfgs,
@@ -247,6 +282,7 @@ def get_common_argparser():
     parser.add_argument('--hand', type=str, default='inspire_hand')
     parser.add_argument('--frame_start', '-fs', type=int, default=40)
     parser.add_argument('--frame_end', '-fe', type=int, default=200)
+    parser.add_argument('--slowdown_rate', '-sd', type=float, default=1.0)
     parser.add_argument('--clip', '-cl', type=str, default="box-40-200-s01-u01")
     parser.add_argument('--show_markers', action='store_true', help='Whether to show contact markers')
     parser.add_argument('--interp', type=int, default=1, help='Interpolation multiplier for the demo data')

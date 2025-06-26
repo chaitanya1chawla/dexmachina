@@ -1,4 +1,5 @@
 import os  
+import json
 import torch
 import numpy as np
 import genesis as gs 
@@ -228,10 +229,23 @@ class BaseEnv:
         self.scene = gs.Scene(**self.scene_cfg)
 
         self.sim_robot = self.scene.add_entity(
-            gs.morphs.MJCF(file="dexmachina/assets/robots/g1/g1_26dof_old_fixedbase_fixedwaist.xml")
+            gs.morphs.MJCF(
+                file="dexmachina/assets/robots/g1/g1_26dof_old_fixedbase_fixedwaist.xml",
+                pos=[0.0, 0.15, 0.9930],
+                quat=[-0.707, 0.0, 0.0, 0.707],
+            )
         )
+        self.n_dofs = self.sim_robot.n_dofs
+        self.sim_robot.base_transform = self.quat_to_se3([-0.707, 0.0, 0.0, 0.707], [0.0, 0.3, 0.9930])
+
+        self.end_effector_right = self.sim_robot.get_link("right_wrist_ee")
+        self.end_effector_left = self.sim_robot.get_link("left_wrist_ee")
+        self.dof_idx_local_right_arm = np.array([13, 15, 17, 19, 21, 23, 25])
+        self.dof_idx_local_left_arm = np.array([12, 14, 16, 18, 20, 22, 24])
+        self.both_arm_dof_idx = np.array([12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25])
         
-        self.rigid_solver = None 
+        
+        self.rigid_solver = None
         for solver in self.scene.sim.solvers:
             if not isinstance(solver, RigidSolver):
                 continue
@@ -384,6 +398,7 @@ class BaseEnv:
             self.post_scene_build_setup()
         else:
             print("Scene created but not built yet") 
+
             
     def build_scene(self):
         env_cfg = self.env_cfg
@@ -393,9 +408,6 @@ class BaseEnv:
             n_envs_per_row=env_cfg.get('n_envs_per_row', None),
 
             )
-        self.sim_robot.set_quat([[-0.707, 0.0, 0.0, 0.707]])  # x, y, z coordinates
-        self.sim_robot.set_pos([[0.0, 0.3, 0.9930]])  # x, y, z coordinates
-        self.sim_robot.base_transform = self.quat_to_se3([-0.707, 0.0, 0.0, 0.707], [0.0, 0.3, 0.9930])
 
     def quat_to_se3(self, quat, pos):
         """Convert quaternion and position to SE3 transformation matrix"""
@@ -520,9 +532,26 @@ class BaseEnv:
             marker = self.wrist_markers[name]
             marker.set_pos(pose[:, :3])
             marker.set_quat(pose[:, 3:])
+        
+        # Write right wrist pose to file
+        ##pose_data_r = wrist_pose_dict['right'].cpu().numpy().tolist()
+        ##pose_data_l = wrist_pose_dict['left'].cpu().numpy().tolist()
+        ##if os.path.exists("pose_history.json"):
+        ##    with open("pose_history.json", "r") as f:
+        ##        existing_data = json.load(f)
+        ##    existing_data.append(pose_data_r[0])
+        ##    existing_data.append(pose_data_l[0])
+        ##    with open("pose_history.json", "w") as f:
+        ##        json.dump(existing_data, f)
+        ##else:
+        ##    # Create new file if it doesn't exist
+        ##    with open("pose_history.json", "w") as f:
+        ##        init = []
+        ##        init.append(pose_data_r[0])
+        ##        init.append(pose_data_l[0])
+        ##        json.dump(init, f)
             
     def compute_obs_dim(self):
-        
         obs_dim = 0
         obs_dim_info = dict()
         obs_idxs = dict()
@@ -885,11 +914,40 @@ class BaseEnv:
         self.update_wrist_markers(self.get_wrist_pose())
         
         # ik for right arm
-        world_target_pose = self.robots['right'].wrist_pose
-        robot_frame_target_pose = self.world2sim_robot(world_target_pose)
-        qpos, right_arm_qpos = self.robot_arm_ik.ik(robot_frame_target_pose)
-        qpos = qpos[np.newaxis, :]
-        self.sim_robot.set_qpos(qpos, zero_velocity=True)
+        world_target_pose_right = self.robots['right'].wrist_pose
+        world_target_pose_left = self.robots['left'].wrist_pose
+        # robot_frame_target_pose = self.world2sim_robot(world_target_pose)
+        # qpos, right_arm_qpos = self.robot_arm_ik.ik(robot_frame_target_pose)
+        # qpos = qpos[np.newaxis, :]
+
+        # qpos_right = self.sim_robot.inverse_kinematics(
+        #     link=self.end_effector_right,
+        #     pos=world_target_pose_right[:,:3].cpu().numpy(),
+        #     quat=world_target_pose_right[:,3:].cpu().numpy(),
+        #     # init_qpos=np.zeros((1, self.n_dofs)),
+        #     # max_samples=200,
+        #     # max_solver_iters=100,
+        #     dofs_idx_local=self.dof_idx_local_right_arm,
+        #     #  return_error=True,
+        #  )
+        # qpos_right[:, self.dof_idx_local_left_arm] = 0.0
+
+        qpos_left = self.sim_robot.inverse_kinematics(
+            link=self.end_effector_left,
+            pos=world_target_pose_left[:,:3].cpu().numpy(),
+            quat=world_target_pose_left[:,3:].cpu().numpy(),
+            # init_qpos=np.zeros((1, self.n_dofs)),
+            dofs_idx_local=self.dof_idx_local_left_arm,
+        )
+        ## qpos_left[:, self.dof_idx_local_right_arm] = 0.0
+        
+        qpos = qpos_left ## + qpos_right   
+        qpos = qpos[:, 12:].squeeze(0)
+        
+        assert qpos.shape[-1] == len(self.both_arm_dof_idx), f"qpos shape: {qpos.shape[-1]}, dof_idx: {len(self.both_arm_dof_idx)}"
+        self.sim_robot.set_qpos(qpos, 
+                                zero_velocity=True, 
+                                qs_idx_local=self.both_arm_dof_idx)
             
     def get_observations(self):
         value_list = []

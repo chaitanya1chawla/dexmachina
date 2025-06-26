@@ -173,7 +173,7 @@ def main():
     # reset the agent and env
     runner.reset()
     # train the agent
-    runner_args = {"train": True, "play": False, "sigma": None}
+    runner_args = {"train": False, "play": True, "sigma": None}
     if args.checkpoint is not None:
         runner_args["checkpoint"] = os.path.abspath(args.checkpoint) 
     runner.run(runner_args)
@@ -184,6 +184,5 @@ def main():
 
 if __name__ == "__main__":
     # run the main function
-    main() 
+    main()
     exit()
-
